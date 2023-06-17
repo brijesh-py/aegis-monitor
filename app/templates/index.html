@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}
+Home
+{% endblock %}
+
+
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container mx-auto py-4" style="max-width:800px;">
+    <form action="/query" class="input-group w3-hover-shadow" >
+        <input type="search" class="w3-input form-control rounded border" name="query"/>
+        <button class="btn w3-red">Search</button>
+    </form>
+    <div class="bg-white rounded text-center py-2  my-2 w3-hover-shadow w3-border">
+        <span>Share URL <a href="{{request.root_url}}redirect/?query={{key}}" class="w3-text-green">{{request.root_url}}redirect/?query={{key}}</a></span>
+    </div>
+    <div class="my-3">
+        <ul class="w3-ul">
+           {% if data %}
+           {% for x in data %}
+           <li class="bg-white w3-hover-shadow mb-2 border-1">
+            <div class="d-flex justify-content-between">
+               <div>
+                <span>{{x.data.browser.userAgent}}</span>
+                <mark>{{x.get_at}}</mark>
+               </div>
+                <span class="toggler"><ion-icon name="chevron-down-outline"></ion-icon></span>
+            </div>
+            <ul class="w3-ul">
+                <li><mark>Browser</mark></li>
+                {% for y in x.data.browser %}
+                <li class="d-flex justify-content-start"><span class="w3-text-blue text-capitalize me-1">{{y}}</span> : <b class="mx-1"> {{x.data.browser[y]}}</b></li>
+                {% endfor %}
+                <li><mark>ISP</mark></li>
+                {% for y in x.data.isp %}
+                <li class="d-flex justify-content-start"><span class="w3-text-blue text-capitalize me-1">{{y}}</span> : <b class="mx-1"> {{x.data.isp[y]}}</b></li>
+                {% endfor %}
+                {%  if x.data.location %}
+                <li><mark>Location</mark></li>
+                {% for y in x.data.location %}
+                <li class="d-flex justify-content-start"><span class="w3-text-blue text-capitalize me-1">{{y}}</span> : <b class="mx-1"> {{x.data.location[y]}}</b></li>
+                {% endfor %}
+                {% endif %}
+            </ul>
+           </li>
+           {% endfor %}
+        </ul>
+           {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    let toggler = document.querySelectorAll(".toggler");
+    toggler.forEach(element=> {
+        element.addEventListener("click",()=> {
+            ele = element.querySelector("ion-icon");
+            if (ele.name == "chevron-down-outline"){
+                ele.name = "chevron-up-outline"
+                element.parentElement.parentElement.querySelector(".w3-ul").style.display = 'block'
+            }else{
+                ele.name = "chevron-down-outline"
+                element.parentElement.parentElement.querySelector(".w3-ul").style.display = 'none'
+            }
+
+        })
+    })
+</script>
+{% endblock %}
